@@ -7,23 +7,36 @@
 </head>
 <body>
     <h1>Welcome to Super Guacamole!</h1>
-    <a id="install-link" href="#">Install GitHub App</a>
+    <a id="login-link" href="#">Login with GitHub</a>
 
     <script>
-        const clientId = 'Iv23liLlpkCcfrcKEFrh';
+        const clientId = 'Ov23liwr6nJGFMwclM1p'; // Your GitHub OAuth App Client ID
         const redirectUri = 'https://giolomidze.github.io/super-guacamole/';
 
-        document.getElementById('install-link').href = 
-            `https://github.com/apps/test-viewer-poc/installations/new?state=your-custom-state&client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}`;
+        // Construct the GitHub OAuth login URL
+        document.getElementById('login-link').href = 
+            `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=read:user`;
 
-        // Capture the code or token from the URL (if needed)
+        // Capture the authorization code from the URL
         const urlParams = new URLSearchParams(window.location.search);
         const code = urlParams.get('code');
-        const token = urlParams.get('token');
 
-        if (code || token) {
-            console.log('Code:', code, 'Token:', token);
-            // You can now exchange this code or use the token as necessary
+        if (code) {
+            // Send the authorization code to the Lambda function via API Gateway
+            fetch(`https://oqlv4wcp4nbzoyjvvvu5g2eqs40akxwv.lambda-url.us-west-2.on.aws/?code=${code}`)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.valid) {
+                        console.log('User is valid and belongs to the organization');
+                        // Proceed with your application logic here
+                    } else {
+                        console.log('User does not belong to the organization');
+                        // Handle unauthorized access here
+                    }
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                });
         }
     </script>
 </body>
