@@ -1,43 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Super Guacamole</title>
-</head>
-<body>
+  </head>
+  <body>
     <h1>Welcome to Super Guacamole!</h1>
     <a id="login-link" href="#">Login with GitHub</a>
 
     <script>
-        const clientId = 'Ov23liwr6nJGFMwclM1p'; // Your GitHub OAuth App Client ID
-        const redirectUri = 'https://giolomidze.github.io/super-guacamole/';
+      const clientId = "Ov23liwr6nJGFMwclM1p"; // Your GitHub OAuth App Client ID
+      const redirectUri = "https://giolomidze.github.io/super-guacamole/";
 
-        // Construct the GitHub OAuth login URL
-        document.getElementById('login-link').href = 
-            `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=read:user`;
+      // Construct the GitHub OAuth login URL
+      // Add the required scopes here
+      document.getElementById(
+        "login-link"
+      ).href = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(
+        redirectUri
+      )}&scope=read:org`;
 
-        // Capture the authorization code from the URL
-        const urlParams = new URLSearchParams(window.location.search);
-        const code = urlParams.get('code');
+      // Capture the authorization code from the URL
+      const urlParams = new URLSearchParams(window.location.search);
+      const code = urlParams.get("code");
 
-        if (code) {
-            // Send the authorization code to the Lambda function via API Gateway
-            fetch(`https://oqlv4wcp4nbzoyjvvvu5g2eqs40akxwv.lambda-url.us-west-2.on.aws/?code=${code}`)
-                .then(response => response.json())
-                .then(data => {
-                    if (data.valid) {
-                        console.log('User is valid and belongs to the organization');
-                        // Proceed with your application logic here
-                    } else {
-                        console.log('User does not belong to the organization');
-                        // Handle unauthorized access here
-                    }
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                });
-        }
+      if (code) {
+        // Send the authorization code to the Lambda function via API Gateway
+        fetch(
+          `https://oqlv4wcp4nbzoyjvvvu5g2eqs40akxwv.lambda-url.us-west-2.on.aws/?code=${code}`
+        )
+          .then((response) => response.json())
+          .then((data) => {
+            if (data.valid) {
+              console.log("User is valid and belongs to the organization");
+              // Proceed with your application logic here
+            } else {
+              console.log("User does not belong to the organization");
+              // Handle unauthorized access here
+            }
+          })
+          .catch((error) => {
+            console.error("Error:", error);
+          });
+      }
     </script>
-</body>
+  </body>
 </html>
